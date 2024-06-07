@@ -49,7 +49,6 @@ Loose candidate metric guidelines:
 - Some kanji known to have been used before will be ranked higher.
 - Kanji that are commonly used for similar wordplay be ranked higher.
     - This includes kanji like "一", but also blatant radical tricks like "仏".
-    - Let's say for now that these shouldn't exceed 0.2?
 - Kanji that are only distinctly similar like "be" or situational "bi" should
 be lower.
 - Other kanji with start with the same romanised letter should be extremely low.
