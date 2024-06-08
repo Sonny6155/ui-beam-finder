@@ -1,10 +1,16 @@
 # ui-beam-finder
 
-An experimental script for Ui Beams detection and visualisation. Simply scans
-8-way beams of Beams on an aligned kana matrix with a small, hardcoded set of
-stand-ins.
+Experimental scripts for Ui Beams detection and visualisation. Might also be
+useful for constructing new Ui Beams from existing text...
 
-## Limitations
+The number one goal is to avoid fancy AI stuff, keeping it alll classical where
+possible. Of course, this does compromise effectiveness and flexibility.
+
+## Exact Search
+Simply scans 8-way beams of Beams on an aligned kana matrix with a small,
+hardcoded set of stand-ins.
+
+### Limitations
 As a simple 5 char search of monospace chars, this does not support:
 - Half or variable-width char alignments
 - Spaced, hyphenated, or off-axis Beams
@@ -15,49 +21,44 @@ As a simple 5 char search of monospace chars, this does not support:
 There are also no plans yet to:
 - Restore pruned lines visually on display
 
-## Pending Work
-### Improvements for Current Version
-- It would be good to clean up the current display method, if possible.
+### Pending Work
 - Configurable text wrapping (check if Marshmallows come in standard size)
-- Better JP sanitisation (well, use case research comes first)
 - Write actual unit tests...
 
-### Candidate Heatmap
+## Candidate Heatmap
 Highlights and weights candidates to simplify human detection of
 context-specific Kanji, funky Unicode, and non-trivially aligned paragraphs.
-This can also be used in automated detector pipeline. In terms of additional
-line visualisation helpers:
-- Highly generic auto line detection seems hard, but maybe a *very* loose form
-of Hough transform could work on aligned matrices?
-- Maybe a tiered connect-the-dots-like approach could work depending on
-candidate density.
 
-The plan:
-1. Read and sanitise text data.
-2. Apply character probability mapping, configurable as an external file.
-3. (Optional) Compute approximated or exact line detection, based on cumulative
-probability, angle, and connectivity.
-4. Display on Seaborn heatmap for visualisation.
+There are plans for approximate line detection... eventually?
 
-Loose candidate metric guidelines:
-- Perfect matches should be max probability.
-- Alt kana should only be slightly less than max.
-- Half/full-width latin should be ranked lower than alt kana.
-    - Partial like "b" or 4th "i" should be very low
-    - Extra romanised characters ("e", "a", and similar shaped) should be even
-    lower.
-- Some kanji known to have been used before will be ranked higher.
-- Kanji that are commonly used for similar wordplay be ranked higher.
-    - This includes kanji like "一", but also blatant radical tricks like "仏".
-- Kanji that are only distinctly similar like "be" or situational "bi" should
-be lower.
-- Other kanji with start with the same romanised letter should be extremely low.
+### Candidate Metric
+The `candidates/` folder currently contains the following score mappings:
+- Main set: Hand-crafted weights, including the actual Ui Beam.
+- Known trick set: Based on kanji used in past Beam pranks, but may source from
+other notable wordplay in the future.
 
-The unknowns:
-- Would colouring by line probablity or line index be more useful than by
-individual char score?
-    - Maybe add configs to test this?
-- How do we best implement associated line index info (per mapping) on the
-final array, and where will we use it?
-- Could we throw in matplotlib widgets to allow the user to test various
-configs easily?
+Loose guidelines for weight tuning may include whether it is applicable in all
+directions, whether it is visual or a reading, whether it is a common reading,
+if it is used a ton for these pranks (none qualify so far), and whether it is
+a full-width character on most fonts.
+
+Currently, visualisation only uses a single score, so the max weight is taken
+after merging all datasets.
+
+### Limitations
+- Cannot discern context-sensitive readings, so applying a light default weight
+is the best I can do for now.
+- Dynamic range and indistinctness of similar weights on continuous colour maps
+both limit heatmap visualisation effectiveness.
+- The jouyou kanji set is inherently missing several common kanji, and probably
+lacks some kanji common to niche sub-communities.
+
+### Pending Work
+- Need to see if there is a good way to make use of `beam_index` metadata for
+extended visualisation (gradient colour by index, approximate line detection,
+interactive filters, etc)
+    - Regarding line detection, it might be doable if a local radius, threshold
+    angle search. This naturally handles limited curvatures and spaced lines.
+- Add widgets to the plot for a simple GUI to edit configs
+- Need to figure out a way to change text colour to a contrasting one, allowing
+a larger dynamic range for the highlighting colour
