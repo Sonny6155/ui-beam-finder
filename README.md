@@ -45,7 +45,7 @@ There are also no plans yet to:
 Highlights and weights candidates to simplify human detection of
 context-specific Kanji, funky Unicode, and non-trivially aligned paragraphs.
 
-There are plans for approximate line detection... eventually?
+Also contains a line detection component (missing visualisation).
 
 ### Candidate Metric
 The `candidates/` folder currently contains the following score mappings:
@@ -70,11 +70,9 @@ both limit heatmap visualisation effectiveness.
 lacks some kanji common to niche sub-communities.
 
 ### Pending Work
-- Need to see if there is a good way to make use of `beam_index` metadata for
-extended visualisation (gradient colour by index, approximate line detection,
-interactive filters, etc)
-    - Regarding line detection, it might be doable if a local radius, threshold
-    angle search. This naturally handles limited curvatures and spaced lines.
+- Although wiggly line detection has been implemented, the visualisation has not yet.
+    - Implement heatmap line drawer
+    - Implement variable-width line highlighter
 - Add widgets to the plot for a simple GUI to edit configs
 - Need to figure out a way to change text colour to a contrasting one, allowing
 a larger dynamic range for the highlighting colour
