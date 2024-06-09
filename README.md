@@ -16,10 +16,10 @@ and m pattern regardless of 2D shape. Assuming the average is a relatively even
 paragraph and matches for the first pattern character set are sparse, this is
 closer to O(n) average.
 
-Pre-loading into a Numpy padded array is unlikely to offer much linear speedup
-without being able to vectorise. Vectorised search would increase the average
-to at least O(nm), and the worst case to O(n^2 m) on sufficiently large and
-uneven text.
+Pre-loading into a Numpy padded array is unlikely to offer significant linear
+speedups without being able to vectorise. Vectorised search would increase the
+average to at least O(nm), and the worst case to O(n^2 m) on sufficiently large
+and uneven text.
 
 However, in the unusual case where the text is expected to be big but also even,
 Scipy's FFT 2D convolve might be a interesting O(n log(n) m) array solution.
