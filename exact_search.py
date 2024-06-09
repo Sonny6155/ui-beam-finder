@@ -44,11 +44,6 @@ if __name__ == "__main__":
 
     # Convert to variable-length "2D"
     data = data.split("\n")
-    # Could have converted to padded Numpy from the beginning then use a
-    # convolution-like approach, but:
-    # - Unicode stuff in Numpy has been a pain so far.
-    # - Eager matching is maaaaybe slower on average without vectorisation?
-    # TODO: On second thoughts, will absolutely change to use utils interface
 
     # Begin radial search
     total_matches = 0

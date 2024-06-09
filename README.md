@@ -10,6 +10,22 @@ possible. Of course, this does compromise effectiveness and flexibility.
 Simply scans 8-way beams of Beams on an aligned kana matrix with a small,
 hardcoded set of stand-ins.
 
+### Other Possible Approaches
+The current method uses variable length rows which maintains O(nm) for n text
+and m pattern regardless of 2D shape. Assuming the average is a relatively even
+paragraph and matches for the first pattern character set are sparse, this is
+closer to O(n) average.
+
+Pre-loading into a Numpy padded array is unlikely to offer much linear speedup
+without being able to vectorise. Vectorised search would increase the average
+to at least O(nm), and the worst case to O(n^2 m) on sufficiently large and
+uneven text.
+
+However, in the unusual case where the text is expected to be big but also even,
+Scipy's FFT 2D convolve might be a interesting O(n log(n) m) array solution.
+This method might be an cool line probability detector for candidate search, if
+a bit fiddly...
+
 ### Limitations
 As a simple 5 char search of monospace chars, this does not support:
 - Half or variable-width char alignments
