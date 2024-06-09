@@ -74,14 +74,9 @@ if __name__ == "__main__":
     print(matches)
     print("Total matches:", total_matches)
 
-    # Coerce and plot with (binary) highlighting
-    # Convert to padded Numpy array of single unicodes
-    longest_line = max(len(s) for s in data)
-    nested_data = [[*s.ljust(longest_line)] for s in data]
-    labels = np.array(nested_data, dtype="<U1")
-    # TODO: Can remove this stuff after redesign
+    # Coerce to 2D array and plot with (binary) highlighting
+    labels = search_utils.to_unicode_paragraph(data)
 
-    # Highlight matched cells
     match_matrix = np.zeros(labels.shape)
     match_matrix[*zip(*matches)] = 1  # Apparently np expects it in zipped form
 

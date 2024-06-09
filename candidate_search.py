@@ -19,7 +19,7 @@ if __name__ == "__main__":
     print(data)
 
     # Convert to Numpy 2D
-    data = search_utils.to_unicode_paragraph(data)
+    data = search_utils.to_unicode_paragraph(data.split("\n"))
     # NOTE: Trying early numpy conversion approach this time
 
     # Merge candidate mappings by max

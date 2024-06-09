@@ -93,16 +93,16 @@ def visualise_paragraph_heat(labels: np.ndarray, weights: np.ndarray) -> None:
     plt.show()
 
 
-# TODO: Testing whether this works well before using
-def to_unicode_paragraph(data: str, fill_char: str = " ") -> np.ndarray:
+def to_unicode_paragraph(data: list[str], fill_char: str = " ") -> np.ndarray:
     """
-    Convert raw string to a 2D Numpy array of individual Unicode chars.
+    Convert text lines to a 2D array of Unicode chars.
+
+    NOTE: Numpy's U1 is fixed-width 4 bytes, whereas latin and most kanji fit
+    within 2 bytes in variable-width UTF-8. Also consider O(n^2) worst case
+    padding for uneven line lengths on n text.
     """
-    working_data = data.split("\n")
-    longest_line = max(len(s) for s in working_data)
-    working_data = [[*s.ljust(longest_line, fill_char)] for s in working_data]
+    longest_line = max(len(s) for s in data)
+    working_data = [[*s.ljust(longest_line, fill_char)] for s in data]
     unicode_array = np.array(working_data, dtype="<U1")
-    # U1 is fixed-width 4 bytes, so potentially 2-4x more than utf-8, not to
-    # mention O(n^2) 2D waste max. Avoid giant uneven paragraphs, I guess?
     
     return unicode_array
