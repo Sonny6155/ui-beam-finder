@@ -34,6 +34,10 @@ def recursive_angle_search(
 
     Uses incremental averaging to progressively build a total angle estimate,
     while continually searching in a limited "cone".
+    
+    Using a hashmap + local search hopefully keeps runtime lower than comparing
+    every other data point matching data on dense data. The bbox can be reduced
+    further if this is ever adapted to large search zones.
 
     When searching for approximate solutions, the search angle must be big
     enough to allow any expected early average errors. Additionally, while
@@ -161,10 +165,6 @@ def beam_search(
     """
     beam_length = 5
 
-    # Motivation is to find lines in text which may be slightly curved by sharp
-    # angles or variable-width characters. Whether or not a "horse move" jump
-    # is actually an acceptable line... Well let's leave it to the user.
-
     # Each character may have multiple indices, so a {coords: indices list} mapping
     # is a bit easier than 3D Numpy for sparse data
     beam_indices = dict()
@@ -182,7 +182,6 @@ def beam_search(
                 beam_indices[(r, c)] = viable_indices
 
     # Begin beam search from index 0
-    # Hoping that square radius search keeps runtime lower than other options
     matches = []
     for coord in beam_indices:
         if 0 in beam_indices[coord]:

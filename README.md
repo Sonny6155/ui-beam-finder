@@ -7,24 +7,8 @@ The number one goal is to avoid fancy AI stuff, keeping it alll classical where
 possible. Of course, this does compromise effectiveness and flexibility.
 
 ## Exact Search
-Simply scans 8-way beams of Beams on an aligned kana matrix with a small,
-hardcoded set of stand-ins.
-
-### Other Possible Approaches
-The current method uses variable length rows which maintains O(nm) for n text
-and m pattern regardless of 2D shape. Assuming the average is a relatively even
-paragraph and matches for the first pattern character set are sparse, this is
-closer to O(n) average.
-
-Pre-loading into a Numpy padded array is unlikely to offer significant linear
-speedups without being able to vectorise. Vectorised search would increase the
-average to at least O(nm), and the worst case to O(n^2 m) on sufficiently large
-and uneven text.
-
-However, in the unusual case where the text is expected to be big but also even,
-Scipy's FFT 2D convolve might be a interesting O(n log(n) m) array solution.
-This method might be an cool line probability detector for candidate search, if
-a bit fiddly...
+The simplest and least flexible of the two. Scans 8-way beams of Beams on an
+aligned kana matrix with a small, hardcoded set of stand-ins.
 
 ### Limitations
 As a simple 5 char search of monospace chars, this does not support:
@@ -37,21 +21,20 @@ As a simple 5 char search of monospace chars, this does not support:
 There are also no plans yet to:
 - Restore pruned lines visually on display
 
-### Pending Work
-- Configurable text wrapping (check if Marshmallows come in standard size)
-- Write actual unit tests...
-
 ## Candidate Heatmap
-Highlights and weights candidates to simplify human detection of
-context-specific Kanji, funky Unicode, and non-trivially aligned paragraphs.
+Highlights candidates by character probability to simplify human detection of
+Kanji trickery, (some) funky Unicode, and paragraphs misaligned with
+variable-width chars.
 
-Also contains a line detection component (missing visualisation).
+Contains a configurable wobbly line detector.
 
 ### Candidate Metric
 The `candidates/` folder currently contains the following score mappings:
 - Main set: Hand-crafted weights, including the actual Ui Beam.
 - Known trick set: Based on kanji used in past Beam pranks, but may source from
 other notable wordplay in the future.
+- Jouyou set: Every jouyou kanji as of 2020, filtered only to those with
+Beam-applicable readings.
 
 Loose guidelines for weight tuning may include whether it is applicable in all
 directions, whether it is visual or a reading, whether it is a common reading,
@@ -62,17 +45,13 @@ Currently, visualisation only uses a single score, so the max weight is taken
 after merging all datasets.
 
 ### Limitations
-- Cannot discern context-sensitive readings, so applying a light default weight
+- Cannot infer actual reading(s), so applying a light default weight
 is the best I can do for now.
-- Dynamic range and indistinctness of similar weights on continuous colour maps
-both limit heatmap visualisation effectiveness.
 - The jouyou kanji set is inherently missing several common kanji, and probably
 lacks some kanji common to niche sub-communities.
 
-### Pending Work
-- Although wiggly line detection has been implemented, the visualisation has not yet.
-    - Implement heatmap line drawer
-    - Implement variable-width line highlighter
-- Add widgets to the plot for a simple GUI to edit configs
-- Need to figure out a way to change text colour to a contrasting one, allowing
-a larger dynamic range for the highlighting colour
+### Possible Work
+Although this project is pretty much concluded, good-to-have features include:
+- Variable-width display and heatmap, with configurable fonts.
+- Matplotlib widgets or proper GUI for toggling search type/configs.
+- Package it for laughs.
