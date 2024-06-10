@@ -6,7 +6,13 @@ import seaborn as sns
 import re
 
 
-def sanitise_japanese(raw_data: str, preferred_width: str = "half", strip_bad: bool = True, strip_space: bool = False, prune_empty_lines: bool = True) -> str:
+def sanitise_japanese(
+    raw_data: str,
+    preferred_width: str = "half",
+    strip_bad: bool = True,
+    strip_space: bool = False,
+    prune_empty_lines: bool = True
+) -> str:
     working_data = raw_data
 
     # Define relevant Unicode ranges
@@ -36,8 +42,8 @@ def sanitise_japanese(raw_data: str, preferred_width: str = "half", strip_bad: b
         raise ValueError("preferred_width arg must be half/full/keep")
     # Derived from: https://stackoverflow.com/questions/2422177/python-how-can-i-replace-full-width-characters-with-half-width-characters
 
-    # Transpose Kangxi radicals to CJK
-    # TODO: Might need normalisation for this after all?
+    # NOTE: Would have also transposed Kangxi radicals, but that sounds like
+    # hell without using normalisation, so I'll leave that to another day...
 
     # Strip bad chars and empty lines, per config
     # NOTE: Stripping all bad chars may ruin some emoticons or advanced tricks
@@ -64,35 +70,6 @@ def sanitise_japanese(raw_data: str, preferred_width: str = "half", strip_bad: b
     return working_data
 
 
-def visualise_paragraph_heat(labels: np.ndarray, weights: np.ndarray) -> None:
-    """
-    Displays 2D kana in a clean, fancy heatmap.
-    """
-    # Maximise plot size, but keep the window small
-    # TODO: Make this more configurable or auto
-    r, c = labels.shape
-    plt.figure(figsize=(c / 4, r / 4))
-
-    # Customised for light-ish highlighting on true white background
-    cmap = LinearSegmentedColormap.from_list("", ["white", "lightblue"])
-
-    sns.heatmap(
-        weights,
-        vmin=0, 
-        vmax=1,
-        cmap=cmap,
-        annot=labels,
-        annot_kws={"fontfamily": "Meiryo"},
-        fmt="s",
-        cbar=False,
-        xticklabels=False,
-        yticklabels=False,
-        square=True,
-    )
-    plt.tight_layout()
-    plt.show()
-
-
 def to_unicode_paragraph(data: list[str], fill_char: str = " ") -> np.ndarray:
     """
     Convert text lines to a 2D array of Unicode chars.
@@ -106,3 +83,32 @@ def to_unicode_paragraph(data: list[str], fill_char: str = " ") -> np.ndarray:
     unicode_array = np.array(working_data, dtype="<U1")
     
     return unicode_array
+
+
+def build_kana_heatmap(labels: np.ndarray, weights: np.ndarray) -> plt.Axes:
+    """
+    Initialises a clean, fancy heatmap for 2D kana.
+    """
+    # Maximise plot size, but keep the window small
+    r, c = labels.shape
+    plt.figure(figsize=(c / 4, r / 4))
+
+    # Customised for an actually white background
+    cmap = LinearSegmentedColormap.from_list("", ["white", "darkturquoise"])
+
+    ax = sns.heatmap(
+        weights,
+        vmin=0, 
+        vmax=1,
+        cmap=cmap,
+        annot=labels,
+        annot_kws={"fontfamily": "Meiryo"},
+        fmt="s",
+        cbar=False,
+        xticklabels=False,
+        yticklabels=False,
+        square=True,
+    )
+    plt.tight_layout()
+
+    return ax

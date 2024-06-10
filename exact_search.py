@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 import search_utils
 
@@ -6,7 +7,7 @@ import search_utils
 # Config
 SEARCH_DIAGONALS = True
 SEARCH_TRICK_KANJI = True  # Based on known trickery, but not comprehensive
-INPUT_FILENAME = "data/bad_chars.txt"
+INPUT_FILENAME = "data/l1ZX-5q-CNk.txt"
 # u"\u3040" might be useful as an invalid sentinel in the hiragana block
 
 # Hardcoded beam lookup
@@ -15,10 +16,11 @@ KANJI_PATTERN = ["噂", "一今仏", "美", "一今仏", "仏難"]  # Sourced fr
 
 
 # Helper functions
-def direction_match(data: list[str], pattern: list[str], r: int, c: int, r_step: int, c_step: int) -> list[tuple[int, int]]:
+def direction_match(
+    data: list[str], pattern: list[str], r: int, c: int, r_step: int, c_step: int
+) -> list[tuple[int, int]]:
     """
     Search for the pattern char set using int steppers.
-    TODO: Consider arg validation
     """
     running_match = []
 
@@ -27,7 +29,11 @@ def direction_match(data: list[str], pattern: list[str], r: int, c: int, r_step:
         next_c = c_step * m + c
 
         # Check if coord is valid and pattern matches
-        if 0 <= next_r < len(data) and 0 <= next_c < len(data[next_r]) and data[next_r][next_c] in pattern[m]:
+        if (
+            0 <= next_r < len(data)
+            and 0 <= next_c < len(data[next_r])
+            and data[next_r][next_c] in pattern[m]
+        ):
             running_match.append((next_r, next_c))
         else:
             return []  # Match failed
@@ -47,11 +53,14 @@ if __name__ == "__main__":
 
     # Begin radial search
     total_matches = 0
-    matches = set()  # NOTE: Set is more useful for now, but might use hashed dict keys in the future for order
+    matches = set()
+    # NOTE: Set is more useful for now, but might use hashed dict keys in the
+    # future to afix order
+
     for r in range(len(data)):
         for c in range(len(data[r])):
             # Prepare cardinal steppers (N, E, S, W)
-            direction_steppers = [(-1, 0), (0, 1), (1, 0),(0, -1)]
+            direction_steppers = [(-1, 0), (0, 1), (1, 0), (0, -1)]
             if SEARCH_DIAGONALS:
                 # Prepare ordinal steppers (NE, SE, Sw, NW)
                 direction_steppers += [(-1, 1), (1, 1), (1, -1), (-1, -1)]
@@ -80,4 +89,5 @@ if __name__ == "__main__":
     match_matrix = np.zeros(labels.shape)
     match_matrix[*zip(*matches)] = 1  # Apparently np expects it in zipped form
 
-    search_utils.visualise_paragraph_heat(labels, match_matrix)
+    search_utils.build_kana_heatmap(labels, match_matrix)
+    plt.show()
